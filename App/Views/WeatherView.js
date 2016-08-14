@@ -1,7 +1,6 @@
 'use strict'
 
 import React, { Component } from 'react';
-
 import{
 	AppRegistry,
 	StyleSheet,
@@ -42,7 +41,7 @@ var WeatherView = React.createClass({
 	// are expected to be
 	propTypes: {
 		weather: React.PropTypes.string,
-		temperature: React.PropTypes.int,
+		temperature: React.PropTypes.string,
 		city: React.PropTypes.string,
 		country: React.PropTypes.string
   },

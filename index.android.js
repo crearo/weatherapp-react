@@ -1,12 +1,8 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
 'use strict';
 
 import React, { Component } from 'react';
-
 import{
+	Alert,
 	AppRegistry,
 	StyleSheet,
 	Text,
@@ -16,26 +12,21 @@ import{
 // component declaration
 var WeatherView = require('./App/Views/WeatherView.js');
 
-
 // constants used for background colors
 var BG_HOT  = "#fb9f4d";
 var BG_WARM = "#fbd84d";
 var BG_COLD = "#00abe6";
 
-
-// a constant for the request url for openweathermap.org, we post to this json url
-// with lat and lon parameters to get the weather for that location
-// see this as the format for parsing:
-// http://api.openweathermap.org/data/2.5/weather?units=metric&lat=35&lon=139
 var REQUEST_URL = "http://api.openweathermap.org/data/2.5/weather?units=metric&";
 var APPID = "0a96c94fea51e8d1d858f902ee9dfc64";
 
-// this is our application class
+// Application class
 var weatherapp = React.createClass({
 
   // returns initial state variables
   // in this case we have weatherData which will hold the API response
   // and backgroundColor which is the state variable for the colour set by the temperature
+
   getInitialState: function() {
     return {
       weatherData: null,
@@ -51,8 +42,6 @@ var weatherapp = React.createClass({
     location => {
       // this variable will contain the full url with the new lat and lon
       var formattedURL = REQUEST_URL + "lat=" + location.coords.latitude + "&lon=" + location.coords.longitude + "&APPID=" + APPID;
-
-      // this will output the final URL to the Xcode output window
       console.log(formattedURL);
 
       // get the data from the API
@@ -60,7 +49,17 @@ var weatherapp = React.createClass({
 
       },
     error => {
-      console.log(error);
+    	// Display dialog if unable to get current location
+      	console.log(error);
+      	Alert.alert(
+      		'Unable to fetch location.',
+      		'Please turn on GPS to get weather results.',
+      		[
+      			{text:'Turn On GPS', onPress: () => console.log("Turn On GPS pressed")},
+      			{text:'Ignore', onPress: () => console.log("Canceled")}
+      		]
+      	)
+
     });
   },
 
@@ -75,6 +74,7 @@ var weatherapp = React.createClass({
         // set the background colour of the app based on temperature
         var bg;
         var temp = parseInt(responseData.main.temp);
+
         if(temp < 14) {
           bg = BG_COLD;
         } else if(temp >= 14 && temp < 25) {
