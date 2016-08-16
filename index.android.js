@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import{
 	Alert,
 	AppRegistry,
+	NetInfo,
 	StyleSheet,
 	Text,
 	View
@@ -41,7 +42,7 @@ var weatherapp = React.createClass({
     navigator.geolocation.getCurrentPosition(
     location => {
       // this variable will contain the full url with the new lat and lon
-      var formattedURL = REQUEST_URL + "lat=" + location.coords.latitude + "&lon=" + location.coords.longitude + "&APPID=" + APPID;
+			var formattedURL = REQUEST_URL + "lat=" + location.coords.latitude + "&lon=" + location.coords.longitude + "&APPID=" + APPID;
       console.log(formattedURL);
 
       // get the data from the API
@@ -53,12 +54,12 @@ var weatherapp = React.createClass({
       	console.log(error);
       	Alert.alert(
       		'Unable to fetch location.',
-      		'Please turn on GPS to get weather results.',
+      		'Please turn on GPS to get weather information of your locality.',
       		[
-      			{text:'Turn On GPS', onPress: () => console.log("Turn On GPS pressed")},
-      			{text:'Ignore', onPress: () => console.log("Canceled")}
+      			{text:'Ignore', onPress: () => console.log("Canceled")},
+						{text:'Turn On GPS', onPress: () => console.log("Turn On GPS pressed")}
       		]
-      	)
+      	);
 
     });
   },
@@ -67,29 +68,42 @@ var weatherapp = React.createClass({
   // sets the apps backgroundColor based on the temperature of
   // the location
   fetchData: function(url) {
-    fetch(url)
-      .then((response) => response.json())
-      .then((responseData) => {
+		NetInfo.isConnected.fetch().then(isConnected => {
+  		console.log('First, is ' + (isConnected ? 'online' : 'offline'));
+			if (isConnected) {
+				fetch(url)
+		      .then((response) => response.json())
+		      .then((responseData) => {
 
-        // set the background colour of the app based on temperature
-        var bg;
-        var temp = parseInt(responseData.main.temp);
+		        // set the background colour of the app based on temperature
+		        var bg;
+						var temp = parseInt(responseData.main.temp);
 
-        if(temp < 14) {
-          bg = BG_COLD;
-        } else if(temp >= 14 && temp < 25) {
-          bg = BG_WARM;
-        } else if(temp >= 25) {
-          bg = BG_HOT;
-        }
+		        if(temp < 14) {
+		          bg = BG_COLD;
+		        } else if(temp >= 14 && temp < 25) {
+		          bg = BG_WARM;
+		        } else if(temp >= 25) {
+		          bg = BG_HOT;
+		        }
 
-        // update the state with weatherData and a set backgroundColor
-        this.setState({
-          weatherData: responseData,
-          backgroundColor: bg
-        });
-      })
-      .done();
+		        // update the state with weatherData and a set backgroundColor
+		        this.setState({
+		          weatherData: responseData,
+		          backgroundColor: bg
+		        });
+		      })
+		      .done();
+			} else {
+				Alert.alert(
+					'Unable to connect to the internet.',
+					'Please connect to the internet',
+					[
+						{text:'Okay', onPress: () => console.log("Okayed")}
+					]
+				);
+			}
+		});
   },
 
   // the loading view is a temporary view used while waiting

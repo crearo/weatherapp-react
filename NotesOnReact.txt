@@ -1,0 +1,22 @@
+Step 1 complete! Over two hours of struggle. Finally got the app to run on my phone.
+
+Things I had to do : Update adb to 1.0.32. Use an Android 5+ phone, set gradle daemon on to increase the speed.
+Here's how to run the app. Run : 1. react-native run-android. 2. adb reverse tcp:8081 tcp:8081 3. react-native start.
+Use this for the gradle speedup : https://docs.gradle.org/2.4/userguide/gradle_daemon.html
+Now will see how APIs are called and print something on the screen.
+
+Step 2. Pull already made library and see how things work. I found a nice weather app open source project. The phone gives fancy nice error messages (some useless ones) whenever an error occurs. For example, android manifest missing a permission.
+
+Day 2.
+Man. Just to get the entire thing to set up took me the whole day. Installing and making sure atom's dependcies work.
+Then installing Nuclide and further more dependencies. Flow still isnt working for me, and that sucks.
+That means no autocomplete. I tried for 2 hours, then stoped trying to setup atom.
+
+Finally thought I'd start coding. And oh fuck no. Watchman started creating issues. I reinstalled the latest version from a blog post (http://bravissimolabs.com/installing-watchman-on-ubuntu-14-04/)
+And then. Baaam. A million more problems.
+
+Okay. So a break from this and finally I found this : http://unix.stackexchange.com/questions/13751/kernel-inotify-watch-limit-reached - Helped me understand the problem a little further. Shutting down the server did the trick however.
+
+Alright. More problems. Fetching JS Bundle is taking _forever_.
+
+Also, now that I have gotten the app to some state, I am going to try to code. JS's syntax is a little weird. I don't fancy all those {} inside ()s.
