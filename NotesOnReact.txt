@@ -20,3 +20,7 @@ Okay. So a break from this and finally I found this : http://unix.stackexchange.
 Alright. More problems. Fetching JS Bundle is taking _forever_.
 
 Also, now that I have gotten the app to some state, I am going to try to code. JS's syntax is a little weird. I don't fancy all those {} inside ()s.
+
+Okay. Day 3.
+You should probably read this http://tadeuzagallo.com/blog/react-native-bridge/ to understand how react native ports code to both Android and iOS. Remember, it runs native code, and is not browser based javascript running app.
+Did a major cleanup of the code to follow ES6 syntax. This changes several things - React.creatClass now becomes a class extending React.Component, that has a constructor - more Java like :) This helped. https://toddmotto.com/react-create-class-versus-component/

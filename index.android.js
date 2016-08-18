@@ -14,67 +14,62 @@ import{
 var WeatherView = require('./App/Views/WeatherView.js');
 
 // constants used for background colors
-var BG_HOT  = "#fb9f4d";
-var BG_WARM = "#fbd84d";
-var BG_COLD = "#00abe6";
+const BG_HOT  = "#fb9f4d";
+const BG_WARM = "#fbd84d";
+const BG_COLD = "#00abe6";
 
-var REQUEST_URL = "http://api.openweathermap.org/data/2.5/weather?units=metric&";
-var APPID = "0a96c94fea51e8d1d858f902ee9dfc64";
+const REQUEST_URL = "http://api.openweathermap.org/data/2.5/weather?units=metric&";
+const APPID = "0a96c94fea51e8d1d858f902ee9dfc64";
 
 // Application class
-var weatherapp = React.createClass({
+class WeatherApp extends React.Component {
 
   // returns initial state variables
   // in this case we have weatherData which will hold the API response
   // and backgroundColor which is the state variable for the colour set by the temperature
-
-  getInitialState: function() {
-    return {
-      weatherData: null,
+	constructor(props){
+		super(props);
+		this.state = {
+			weatherData: null,
       backgroundColor: "#FFFFFF"
-    };
-  },
+		};
+	}
 
   // this method is invoked automatically when the class (or module)
   // is mounted successfully. In this instance, we use it to query the
   // navigator to get the current geolocation latitude and longitude
-  componentDidMount: function() {
+  componentDidMount() {
     navigator.geolocation.getCurrentPosition(
-    location => {
-      // this variable will contain the full url with the new lat and lon
-			var formattedURL = REQUEST_URL + "lat=" + location.coords.latitude + "&lon=" + location.coords.longitude + "&APPID=" + APPID;
-      console.log(formattedURL);
-
-      // get the data from the API
-      this.fetchData(formattedURL);
-
-      },
-    error => {
-    	// Display dialog if unable to get current location
+			location => {
+				var formattedURL = REQUEST_URL + "lat=" + location.coords.latitude + "&lon=" + location.coords.longitude + "&APPID=" + APPID;
+	      console.log(formattedURL);
+	      // get the data from the API
+	      this.fetchData(formattedURL);
+	      },
+    	error => {
+    		// Display dialog if unable to get current location
       	console.log(error);
       	Alert.alert(
-      		'Unable to fetch location.',
-      		'Please turn on GPS to get weather information of your locality.',
+      		"Unable to fetch location.",
+      		"Please turn on GPS to get weather information of your locality.",
       		[
       			{text:'Ignore', onPress: () => console.log("Canceled")},
 						{text:'Turn On GPS', onPress: () => console.log("Turn On GPS pressed")}
       		]
       	);
-
     });
-  },
+  }
 
   // fetchdata takes the formattedURL, gets the json data and
   // sets the apps backgroundColor based on the temperature of
   // the location
-  fetchData: function(url) {
+  fetchData(url) {
 		NetInfo.isConnected.fetch().then(isConnected => {
-  		console.log('First, is ' + (isConnected ? 'online' : 'offline'));
+  		console.log('Is ' + (isConnected ? 'online' : 'offline'));
 			if (isConnected) {
 				fetch(url)
 		      .then((response) => response.json())
 		      .then((responseData) => {
-
 		        // set the background colour of the app based on temperature
 		        var bg;
 						var temp = parseInt(responseData.main.temp);
@@ -104,12 +99,12 @@ var weatherapp = React.createClass({
 				);
 			}
 		});
-  },
+  }
 
   // the loading view is a temporary view used while waiting
   // for the api to return data
   // note
-  renderLoadingView: function() {
+  renderLoadingView() {
     return (
       <View style={styles.loading}>
         <Text style={styles.loadingText}>
@@ -117,10 +112,9 @@ var weatherapp = React.createClass({
         </Text>
       </View>
     );
-  },
+  }
 
-
-  render: function() {
+  render() {
     // check if weather data is available
     // if not, render the loading view
     if (!this.state.weatherData) {
@@ -137,19 +131,17 @@ var weatherapp = React.createClass({
     // render
     return (
       <View style={[styles.container, {backgroundColor: this.state.backgroundColor}]}>
-
           <WeatherView
                 weather={weather}
                 temperature={temp}
                 city={city}
                 country={country} />
-
       </View>
     );
   }
-});
+};
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1
   },
@@ -167,4 +159,4 @@ var styles = StyleSheet.create({
   }
 });
 
-AppRegistry.registerComponent('AwesomeProject', () => weatherapp);
+AppRegistry.registerComponent('AwesomeProject', () => WeatherApp);
