@@ -7,6 +7,7 @@ import{
 	NetInfo,
 	StyleSheet,
 	Text,
+	TextInput,
 	View
 } from 'react-native';
 
@@ -21,6 +22,9 @@ const BG_COLD = "#00abe6";
 const REQUEST_URL = "http://api.openweathermap.org/data/2.5/weather?units=metric&";
 const APPID = "0a96c94fea51e8d1d858f902ee9dfc64";
 
+const TYPE_BY_LATLON = "bylatlong";
+const TYPE_BY_NAME = "byplace";
+
 // Application class
 class WeatherApp extends React.Component {
 
@@ -30,6 +34,7 @@ class WeatherApp extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
+			citySearched : null,
 			weatherData: null,
       backgroundColor: "#FFFFFF"
 		};
@@ -39,26 +44,59 @@ class WeatherApp extends React.Component {
   // is mounted successfully. In this instance, we use it to query the
   // navigator to get the current geolocation latitude and longitude
   componentDidMount() {
-    navigator.geolocation.getCurrentPosition(
-			location => {
-				var formattedURL = REQUEST_URL + "lat=" + location.coords.latitude + "&lon=" + location.coords.longitude + "&APPID=" + APPID;
-	      console.log(formattedURL);
-	      // get the data from the API
-	      this.fetchData(formattedURL);
-	      },
-    	error => {
-    		// Display dialog if unable to get current location
-      	console.log(error);
-      	Alert.alert(
-      		"Unable to fetch location.",
-      		"Please turn on GPS to get weather information of your locality.",
-      		[
-      			{text:'Ignore', onPress: () => console.log("Canceled")},
-						{text:'Turn On GPS', onPress: () => console.log("Turn On GPS pressed")}
-      		]
-      	);
-    });
+		this.displayAndFetchWeatherData();
   }
+
+  displayAndFetchWeatherData(){
+		if (!this.state.citySearched) {
+			console.log("City is null, searching by latlon");
+	    navigator.geolocation.getCurrentPosition(
+				location => {
+					var uri = {
+						"type" : TYPE_BY_LATLON,
+						"lat" : location.coords.latitude,
+						"lon" : location.coords.longitude
+					};
+					var formattedURL = this.buildRequestURL(uri);
+		      console.log(formattedURL);
+		      this.fetchData(formattedURL);
+		      },
+	    	error => {
+	    		// Display dialog if unable to get current location
+	      	console.log(error);
+	      	Alert.alert(
+	      		"Unable to fetch location.",
+	      		"Please turn on GPS to get weather information of your locality. Currently displaying location of Euthopia.",
+	      		[
+							{text:'Turn On GPS', onPress: () => console.log("Turn On GPS pressed")},
+							{text:'Okay', onPress: () => {
+									console.log("Okayed, displaying Euthopia's weather");
+									this.setState({citySearched : "london,uk"});
+									this.displayAndFetchWeatherData();
+								}
+							}
+	      		]
+	      	);
+	    });
+		} else {
+			console.log("City searched not null, is " + this.state.citySearched);
+			var uri = {
+				"type" : TYPE_BY_NAME,
+				"cityName" : this.state.citySearched
+			};
+			var formattedURL = this.buildRequestURL(uri);
+			console.log(formattedURL);
+			this.fetchData(formattedURL);
+		}
+	}
+
+	buildRequestURL(uri) {
+		if(uri.type == TYPE_BY_LATLON)
+			return REQUEST_URL + "lat=" + uri.lat + "&lon=" + uri.lon + "&APPID=" + APPID;
+		else if(uri.type == TYPE_BY_NAME)
+			return REQUEST_URL + "q=" + uri.cityName + "&APPID=" + APPID;
+		else return REQUEST_URL + "&APPID=" + APPID;
+	}
 
   // fetchdata takes the formattedURL, gets the json data and
   // sets the apps backgroundColor based on the temperature of
@@ -73,6 +111,7 @@ class WeatherApp extends React.Component {
 		        // set the background colour of the app based on temperature
 		        var bg;
 						var temp = parseInt(responseData.main.temp);
+						var cityName = responseData.name
 
 		        if(temp < 14) {
 		          bg = BG_COLD;
@@ -84,6 +123,7 @@ class WeatherApp extends React.Component {
 
 		        // update the state with weatherData and a set backgroundColor
 		        this.setState({
+							citySearched:cityName,
 		          weatherData: responseData,
 		          backgroundColor: bg
 		        });
@@ -114,6 +154,13 @@ class WeatherApp extends React.Component {
     );
   }
 
+	handleTextEntered(text){
+		console.log("Setting state of citySearched to " + text);
+		this.setState({citySearched: text});
+		console.log("city is " + this.state.citySearched);
+		this.displayAndFetchWeatherData();
+	}
+
   render() {
     // check if weather data is available
     // if not, render the loading view
@@ -136,7 +183,15 @@ class WeatherApp extends React.Component {
                 temperature={temp}
                 city={city}
                 country={country} />
-      </View>
+
+					<TextInput
+						style={{height:40}}
+						placeHolder="Enter place name here"
+						autoCorrect={false}
+						defaultValue={this.state.citySearched}
+						onSubmitEditing={(event) => this.handleTextEntered(event.nativeEvent.text)}
+					/>
+			</View>
     );
   }
 };
