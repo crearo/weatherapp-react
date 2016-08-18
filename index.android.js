@@ -185,7 +185,7 @@ class WeatherApp extends React.Component {
                 country={country} />
 
 					<TextInput
-						style={{height:40}}
+						style={[styles.searchBar]}
 						placeHolder="Enter place name here"
 						autoCorrect={false}
 						defaultValue={this.state.citySearched}
@@ -211,7 +211,19 @@ const styles = StyleSheet.create({
     fontWeight: "100",
     color: "#666666",
     textAlign: "center"
-  }
+  },
+	searchBar:{
+		fontSize: 16,
+		borderColor: 'black',
+		borderRadius: 20,
+		borderWidth : 5,
+		height:48,
+		backgroundColor: 'white',
+		margin: 8,
+		padding: 4
+
+	}
+
 });
 
 AppRegistry.registerComponent('AwesomeProject', () => WeatherApp);
