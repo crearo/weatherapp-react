@@ -12,7 +12,7 @@ Man. Just to get the entire thing to set up took me the whole day. Installing an
 Then installing Nuclide and further more dependencies. Flow still isnt working for me, and that sucks.
 That means no autocomplete. I tried for 2 hours, then stoped trying to setup atom.
 
-Finally thought I'd start coding. And oh fuck no. Watchman started creating issues. I reinstalled the latest version from a blog post (http://bravissimolabs.com/installing-watchman-on-ubuntu-14-04/)
+Finally thought I'd start coding. And oh man no. Watchman started creating issues. I reinstalled the latest version from a blog post (http://bravissimolabs.com/installing-watchman-on-ubuntu-14-04/)
 And then. Baaam. A million more problems.
 
 Okay. So a break from this and finally I found this : http://unix.stackexchange.com/questions/13751/kernel-inotify-watch-limit-reached - Helped me understand the problem a little further. Shutting down the server did the trick however.
@@ -30,3 +30,5 @@ Alright. Lots added. But now I'm stuck at the 'this' problem. Much annoying. () 
 
 Okay. Day 4.
 Finally understood what the setState problem was. setState is an async function call, and hence requires a callback.
+Changing name of application and its icon is easy - a little hacky. Just do so like you would in Android. (values/strings and manifest)
+However, changing the package name, probably not so easy. Haven't tried so far, but the initial AwesomeProject init command creates an app with package name com.awesomeproject.
