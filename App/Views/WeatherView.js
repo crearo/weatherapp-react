@@ -39,14 +39,22 @@ class WeatherView extends React.Component{
 		super(props);
 	}
 
-	// the views render method
 	render() {
+		let sunrise = new Date(this.props.sunrise*1000);
+		let sunset = new Date(this.props.sunset*1000);
+
+		// following are very sloppy ways of getting time string in 2 digit format.
+		sunrise = ("0" + sunrise.getHours()).slice(-2) + " : " + ("0" + sunrise.getMinutes()).slice(-2);
+		sunset = ("0" + sunset.getHours()).slice(-2) + " : " + ("0" + sunset.getMinutes()).slice(-2);
+
 		return (
 			<View style={styles.centreContainer}>
 				<Image source={weatherIconArray[this.props.weather]} style={styles.weatherIcon} />
-				<Text style={styles.weatherText}>{this.props.temperature}&deg;</Text>
-				<Text style={styles.weatherTextLight}>{this.props.city},</Text>
-				<Text style={styles.weatherTextLight}>{this.props.country}</Text>
+				<Text style={styles.weatherTextMedium}>{this.props.description}</Text>
+				<Text style={styles.weatherTextLarge}>{this.props.temperature}&deg;</Text>
+				<Text style={styles.weatherTextMedium}>{this.props.city}, {this.props.country}</Text>
+				<Text style={styles.weatherTextSmall}>Sunrise : {sunrise}</Text>
+				<Text style={styles.weatherTextSmall}>Sunset  : {sunset}</Text>
 			</View>
     )
   }
@@ -59,8 +67,11 @@ class WeatherView extends React.Component{
 WeatherView.propTypes = {
 	weather: React.PropTypes.string,
 	temperature: React.PropTypes.string,
+	description: React.PropTypes.string,
 	city: React.PropTypes.string,
-	country: React.PropTypes.string
+	country: React.PropTypes.string,
+	sunset: React.PropTypes.number,
+	sunrise: React.PropTypes.number,
 }
 
 // the components Styles
@@ -74,18 +85,24 @@ const styles = StyleSheet.create({
     width: 132,
     height: 132,
   },
-  weatherText: {
-    fontSize: 62,
+  weatherTextLarge: {
+    fontSize: 56,
     fontWeight: "bold",
     color: "#FFFFFF",
-		textAlign: "center"
+		textAlign: "center",
   },
-  weatherTextLight: {
-    fontSize: 32,
-    fontWeight: "100",
+  weatherTextMedium: {
+    fontSize: 24,
+    fontWeight: "normal",
     color: "#FFFFFF",
-		textAlign: "center"
-  }
+		textAlign: "center",
+  },
+	weatherTextSmall:{
+		fontSize: 16,
+		fontWeight: "normal",
+		color: "#FFFFFF",
+		textAlign: "center",
+	},
 });
 
 // this components export name is WeatherView

@@ -12,7 +12,8 @@ import{
 } from 'react-native';
 
 // component declaration
-var WeatherView = require('./App/Views/WeatherView.js');
+let WeatherView = require('./App/Views/WeatherView.js');
+let ConnectionLostView = require('./App/Views/ConnectionLostView.js');
 
 // constants used for background colors
 const BG_HOT  = "#fb9f4d";
@@ -35,6 +36,8 @@ class WeatherApp extends React.Component {
 		super(props);
 		this.handleTextEntered = this.handleTextEntered.bind(this);
 		this.state = {
+			isConnected : true,
+			isLoading : true,
 			citySearched : null,
 			weatherData: null,
       backgroundColor: "#FFFFFF"
@@ -53,12 +56,12 @@ class WeatherApp extends React.Component {
 			console.log("City is null, searching by latlon");
 	    navigator.geolocation.getCurrentPosition(
 				location => {
-					var uri = {
+					let uri = {
 						"type" : TYPE_BY_LATLON,
 						"lat" : location.coords.latitude,
 						"lon" : location.coords.longitude
 					};
-					var formattedURL = this.buildRequestURL(uri);
+					let formattedURL = this.buildRequestURL(uri);
 		      console.log(formattedURL);
 		      this.fetchData(formattedURL);
 		      },
@@ -67,12 +70,14 @@ class WeatherApp extends React.Component {
 	      	console.log(error);
 	      	Alert.alert(
 	      		"Unable to fetch location.",
-	      		"Please turn on GPS to get weather information of your locality. Currently displaying location of Euthopia.",
+	      		"Please turn on GPS to get weather information of your locality. Currently displaying location of New Delhi, India.",
 	      		[
-							{text:'Turn On GPS', onPress: () => console.log("Turn On GPS pressed")},
+							{text:'Turn On GPS', onPress: () => {
+								this.setState({citySearched : "india"});
+								this.displayAndFetchWeatherData();
+							}},
 							{text:'Okay', onPress: () => {
-									console.log("Okayed, displaying Euthopia's weather");
-									this.setState({citySearched : "london,uk"});
+									this.setState({citySearched : "india"});
 									this.displayAndFetchWeatherData();
 								}
 							}
@@ -81,11 +86,11 @@ class WeatherApp extends React.Component {
 	    });
 		} else {
 			console.log("City searched not null, is " + this.state.citySearched);
-			var uri = {
+			let uri = {
 				"type" : TYPE_BY_NAME,
 				"cityName" : this.state.citySearched
 			};
-			var formattedURL = this.buildRequestURL(uri);
+			let formattedURL = this.buildRequestURL(uri);
 			console.log(formattedURL);
 			this.fetchData(formattedURL);
 		}
@@ -110,9 +115,9 @@ class WeatherApp extends React.Component {
 		      .then((response) => response.json())
 		      .then((responseData) => {
 		        // set the background colour of the app based on temperature
-		        var bg;
-						var temp = parseInt(responseData.main.temp);
-						var cityName = responseData.name
+		        let bg;
+						let temp = parseInt(responseData.main.temp);
+						let cityName = responseData.name
 
 		        if(temp < 14) {
 		          bg = BG_COLD;
@@ -124,6 +129,7 @@ class WeatherApp extends React.Component {
 
 		        // update the state with weatherData and a set backgroundColor
 		        this.setState({
+							isConnected:true,
 							citySearched:cityName,
 		          weatherData: responseData,
 		          backgroundColor: bg
@@ -132,19 +138,30 @@ class WeatherApp extends React.Component {
 		      .done();
 			} else {
 				Alert.alert(
-					'Unable to connect to the internet.',
-					'Please connect to the internet',
-					[
-						{text:'Okay', onPress: () => console.log("Okayed")}
-					]
+					'Connectivity Issues',
+					'Please connect to the internet to get weather information.',
+					[{
+							text:'Retry', onPress: () => {
+								this.setState({isConnected:false}, () => {
+									// console.log("Set state to false");
+									this.displayAndFetchWeatherData();
+								});
+							}
+					}]
 				);
 			}
 		});
   }
 
-  // the loading view is a temporary view used while waiting
-  // for the api to return data
-  // note
+	renderConnectionLostView(){
+		return (
+			<View>
+				<ConnectionLostView retry={this.displayAndFetchWeatherData}>
+    		</ConnectionLostView>
+   		</View>
+		);
+	}
+
   renderLoadingView() {
     return (
       <View style={styles.loading}>
@@ -172,10 +189,13 @@ class WeatherApp extends React.Component {
 
     // format text used in the state.weatherData variable as these
     // are passed to the WeatherView component
-    var city = this.state.weatherData.name.toUpperCase();
-    var country = this.state.weatherData.sys.country.toUpperCase();
-    var temp = parseInt(this.state.weatherData.main.temp).toFixed(0);
-    var weather = this.state.weatherData.weather[0].icon.toString();
+    let city = this.state.weatherData.name.toUpperCase();
+    let country = this.state.weatherData.sys.country.toUpperCase();
+    let temp = parseInt(this.state.weatherData.main.temp).toFixed(0);
+    let weather = this.state.weatherData.weather[0].icon.toString();
+		let description = this.state.weatherData.weather[0].description.toString();
+		let sunrise = this.state.weatherData.sys.sunrise;
+		let sunset = this.state.weatherData.sys.sunset;
 
     // render
     return (
@@ -184,7 +204,10 @@ class WeatherApp extends React.Component {
                 weather={weather}
                 temperature={temp}
                 city={city}
-                country={country} />
+								description={description}
+                country={country}
+								sunset={sunset}
+								sunrise={sunrise} />
 
 					<TextInput
 						style={styles.searchBar}

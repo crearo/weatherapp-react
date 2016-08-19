@@ -27,3 +27,6 @@ You should probably read this http://tadeuzagallo.com/blog/react-native-bridge/ 
 Did a major cleanup of the code to follow ES6 syntax. This changes several things - React.creatClass now becomes a class extending React.Component, that has a constructor - more Java like :) This helped. https://toddmotto.com/react-create-class-versus-component/
 Okay. Finally started writing code. Man, the hardest thing about this is, I don't know the syntax. I have to learn as I go, and it is getting shit tough. - I didn't know how to make and call a fuction correctly 5 minutes ago.
 Alright. Lots added. But now I'm stuck at the 'this' problem. Much annoying. () => {} calls a method
+
+Okay. Day 4.
+Finally understood what the setState problem was. setState is an async function call, and hence requires a callback.
