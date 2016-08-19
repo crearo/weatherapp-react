@@ -16,9 +16,10 @@ let WeatherView = require('./App/Views/WeatherView.js');
 let ConnectionLostView = require('./App/Views/ConnectionLostView.js');
 
 // constants used for background colors
-const BG_HOT  = "#fb9f4d";
-const BG_WARM = "#fbd84d";
-const BG_COLD = "#00abe6";
+const BG_NIGHT  = "#1D1E20";
+const BG_MORNING = "#0D6BB1";
+const BG_DAY = "#314C6A";
+const BG_EVENING = "#2C273E";
 
 const REQUEST_URL = "http://api.openweathermap.org/data/2.5/weather?units=metric&";
 const APPID = "0a96c94fea51e8d1d858f902ee9dfc64";
@@ -119,14 +120,16 @@ class WeatherApp extends React.Component {
 						let temp = parseInt(responseData.main.temp);
 						let cityName = responseData.name
 
-		        if(temp < 14) {
-		          bg = BG_COLD;
-		        } else if(temp >= 14 && temp < 25) {
-		          bg = BG_WARM;
-		        } else if(temp >= 25) {
-		          bg = BG_HOT;
-		        }
-
+						let hour = new Date().getHours();
+		        if(hour>=5 && hour <=9)
+							bg = BG_MORNING;
+						else if(hour>=10 && hour <=17)
+							bg = BG_DAY;
+						else if(hour>=18 && hour <= 20)
+							bg = BG_EVENING;
+						else
+							bg = BG_NIGHT;
+						
 		        // update the state with weatherData and a set backgroundColor
 		        this.setState({
 							isConnected:true,
