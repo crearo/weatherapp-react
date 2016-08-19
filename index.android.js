@@ -33,6 +33,7 @@ class WeatherApp extends React.Component {
   // and backgroundColor which is the state variable for the colour set by the temperature
 	constructor(props){
 		super(props);
+		this.handleTextEntered = this.handleTextEntered.bind(this);
 		this.state = {
 			citySearched : null,
 			weatherData: null,
@@ -155,10 +156,11 @@ class WeatherApp extends React.Component {
   }
 
 	handleTextEntered(text){
-		console.log("Setting state of citySearched to " + text);
-		this.setState({citySearched: text});
-		console.log("city is " + this.state.citySearched);
-		this.displayAndFetchWeatherData();
+		console.log(this.state.citySearched);
+		this.setState({citySearched:text}, () => {
+			console.log('from cb' + this.state.citySearched);
+			this.displayAndFetchWeatherData();
+		});
 	}
 
   render() {
@@ -185,7 +187,7 @@ class WeatherApp extends React.Component {
                 country={country} />
 
 					<TextInput
-						style={[styles.searchBar]}
+						style={styles.searchBar}
 						placeHolder="Enter place name here"
 						autoCorrect={false}
 						defaultValue={this.state.citySearched}
@@ -204,13 +206,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   loadingText: {
     fontSize: 32,
     fontWeight: "100",
     color: "#666666",
-    textAlign: "center"
+    textAlign: "center",
   },
 	searchBar:{
 		fontSize: 16,
@@ -220,7 +222,7 @@ const styles = StyleSheet.create({
 		height:48,
 		backgroundColor: 'white',
 		margin: 8,
-		padding: 4
+		padding: 4,
 
 	}
 

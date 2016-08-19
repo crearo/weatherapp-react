@@ -16,6 +16,7 @@ Finally thought I'd start coding. And oh fuck no. Watchman started creating issu
 And then. Baaam. A million more problems.
 
 Okay. So a break from this and finally I found this : http://unix.stackexchange.com/questions/13751/kernel-inotify-watch-limit-reached - Helped me understand the problem a little further. Shutting down the server did the trick however.
+This link fixes the watchman error : https://github.com/facebook/react-native/issues/3199
 
 Alright. More problems. Fetching JS Bundle is taking _forever_.
 
